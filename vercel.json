@@ -1,7 +1,0 @@
-{
-  "name": "backend",
-  "version": 2,
-  "env": {
-    "DB_URI": "@DB_URI"
-  }
-}
