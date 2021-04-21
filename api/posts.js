@@ -35,9 +35,16 @@ module.exports = async (req, res) => {
 
     // Select the "users" collection from the database
     const collection = await db.collection('posts')
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+    const skipIndex = (page-1) * limit
 
     // Select the users collection from the database
-    const posts = await collection.find({}).limit(4).toArray()
+    const posts = await collection.find({})
+        .sort({_id: 1})
+        .limit(limit)
+        .skip(skipIndex)
+        .toArray()
 
     // Respond with a JSON string of all users in the collection
     res.status(200).json({ posts })
