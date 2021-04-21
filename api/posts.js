@@ -35,6 +35,12 @@ module.exports = async (req, res) => {
 
     // Select the "users" collection from the database
     const collection = await db.collection('posts')
+    if (!parseInt(req.query.page)) {
+        req.query.page = 1;
+    }
+    if (!parseInt(req.query.limit)) {
+        req.query.limit = 10;
+    }
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
     const skipIndex = (page-1) * limit
