@@ -1,0 +1,7 @@
+{
+  "name": "backend",
+  "version": 1,
+  "env": {
+    "MONGODB_URI": "@DB_URI"
+  }
+}
