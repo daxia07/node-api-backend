@@ -31,7 +31,11 @@ async function connectToDatabase(uri) {
 module.exports = async (req, res) => {
     // Get a database connection, cached or otherwise,
     // using the connection string environment variable as the argument
+    console.log(req.method)
+    console.log(req.originalUrl)
+    console.log(req.body)
     const db = await connectToDatabase(process.env.DB_URI)
+    res.header("Access-Control-Allow-Origin", "*");
 
     // Select the "users" collection from the database
     const collection = await db.collection('posts')
@@ -41,6 +45,7 @@ module.exports = async (req, res) => {
     if (!parseInt(req.query.limit)) {
         req.query.limit = 10;
     }
+    // if get method under root url
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
     const skipIndex = (page-1) * limit
