@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
     console.log(req.originalUrl)
     console.log(req.body)
     const db = await connectToDatabase(process.env.DB_URI)
-    res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Origin", "*");
 
     // Select the "users" collection from the database
     const collection = await db.collection('posts')
