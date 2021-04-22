@@ -13,9 +13,14 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    liked: {
+    likes: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
+    },
+    views: {
+        type: Number,
+        default: 0
     },
     visitedDate: {
         type: Date,

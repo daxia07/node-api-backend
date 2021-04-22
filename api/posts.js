@@ -47,25 +47,29 @@ module.exports = async (req, res) => {
     )
 
     // Select the "users" collection from the database
-    const collection = await db.collection('posts')
-    if (!parseInt(req.query.page)) {
-        req.query.page = 1;
-    }
-    if (!parseInt(req.query.limit)) {
-        req.query.limit = 10;
-    }
-    // if get method under root url
-    const page = parseInt(req.query.page)
-    const limit = parseInt(req.query.limit)
-    const skipIndex = (page-1) * limit
+    if (req.method === "GET") {
+        const collection = await db.collection('posts')
+        if (!parseInt(req.query.page)) {
+            req.query.page = 1;
+        }
+        if (!parseInt(req.query.limit)) {
+            req.query.limit = 10;
+        }
+        // if get method under root url
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const skipIndex = (page-1) * limit
 
-    // Select the users collection from the database
-    const posts = await collection.find({})
-        .sort({_id: 1})
-        .limit(limit)
-        .skip(skipIndex)
-        .toArray()
+        // Select the users collection from the database
+        const posts = await collection.find({})
+            .sort({likes: 1, views: -1, visitedDate: 1, post_date: -1, topic: 1 })
+            .limit(limit)
+            .skip(skipIndex)
+            .toArray()
 
-    // Respond with a JSON string of all users in the collection
-    res.status(200).json({ posts })
+        // Respond with a JSON string of all users in the collection
+        res.status(200).json({ posts })
+    } else {
+        console.log(req.method)
+    }
 }
