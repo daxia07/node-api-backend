@@ -67,14 +67,17 @@ module.exports = async (req, res) => {
         // Respond with a JSON string of all users in the collection
         res.status(200).json({ posts })
     } else if (req.method === 'POST') {
-        console.log(req.body._id)
-        const o_id = new ObjectID(req.body._id)
-        const ret = await collection
-            .updateOne({_id: o_id},
-                    {$inc:{views:1}}
-            )
-        // req.body
+        const { data } = req.body
         // fetch id, update read, like, duration
-        res.send(ret)
+        for (let idx in data ) {
+            const o_id = new ObjectID(data[idx]._id)
+            // for each element do update one
+            // update likes, views, visitedDate, totalDuration
+            await collection
+                .updateOne({_id: o_id},
+                    {$inc:{views:1}}
+                )
+        }
+        res.send("OK")
     }
 }
