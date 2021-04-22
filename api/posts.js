@@ -1,6 +1,7 @@
 // Import Dependencies
 const url = require('url')
 const MongoClient = require('mongodb').MongoClient
+const ObjectID = require('mongodb').ObjectID
 
 // Create cached connection variable
 let cachedDb = null
@@ -31,9 +32,6 @@ async function connectToDatabase(uri) {
 module.exports = async (req, res) => {
     // Get a database connection, cached or otherwise,
     // using the connection string environment variable as the argument
-    console.log(req.method)
-    console.log(req.originalUrl)
-    console.log(req.body)
     const db = await connectToDatabase(process.env.DB_URI)
     // res.header("Access-Control-Allow-Origin", "*");
     res.setHeader('Access-Control-Allow-Credentials', true)
@@ -45,10 +43,9 @@ module.exports = async (req, res) => {
         'Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     )
-
+    const collection = await db.collection('posts')
     // Select the "users" collection from the database
     if (req.method === "GET") {
-        const collection = await db.collection('posts')
         if (!parseInt(req.query.page)) {
             req.query.page = 1;
         }
@@ -69,7 +66,15 @@ module.exports = async (req, res) => {
 
         // Respond with a JSON string of all users in the collection
         res.status(200).json({ posts })
-    } else {
-        console.log(req.method)
+    } else if (req.method === 'POST') {
+        console.log(req.body._id)
+        const o_id = new ObjectID(req.body._id)
+        const ret = await collection
+            .updateOne({_id: o_id},
+                    {$inc:{views:1}}
+            )
+        // req.body
+        // fetch id, update read, like, duration
+        res.send(ret)
     }
 }
