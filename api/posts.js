@@ -69,8 +69,8 @@ module.exports = async (req, res) => {
     } else if (req.method === 'POST') {
         const { data } = req.body
         // fetch id, update read, like, duration
-        for (let idx in data ) {
-            const o_id = new ObjectID(data[idx]._id)
+        for (let item of data ) {
+            const o_id = new ObjectID(item._id)
             // for each element do update one
             // update likes, views, visitedDate, totalDuration
             await collection
