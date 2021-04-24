@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
         // Select the users collection from the database
         // select new
         const posts = await collection.find({})
-            .sort({views: 1, post_date: -1, isPortrait: 0, topic: 1, totalDuration: -1 })
+            .sort({views: 1, post_date: -1, isPortrait: -1, topic: 1, totalDuration: -1 })
             .limit(limit)
             .skip(skipIndex)
             .toArray()
