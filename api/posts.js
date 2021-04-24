@@ -3,6 +3,10 @@ const url = require('url')
 const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
 
+const { send } = require('micro')
+const microCors = require('micro-cors')
+const cors = microCors({ allowMethods: ['PUT', 'POST', 'GET'] })
+
 // Create cached connection variable
 let cachedDb = null
 
@@ -29,7 +33,7 @@ async function connectToDatabase(uri) {
 
 // The main, exported, function of the endpoint,
 // dealing with the request and subsequent response
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
     // Get a database connection, cached or otherwise,
     // using the connection string environment variable as the argument
     const db = await connectToDatabase(process.env.DB_URI)
@@ -83,6 +87,8 @@ module.exports = async (req, res) => {
                     }
                 )
         }
-        res.status(200).json({ data })
+        send('OK')
     }
 }
+
+module.exports = cors(handler)
