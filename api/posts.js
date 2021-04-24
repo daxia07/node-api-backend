@@ -58,8 +58,9 @@ module.exports = async (req, res) => {
         const skipIndex = (page-1) * limit
 
         // Select the users collection from the database
+        // select new
         const posts = await collection.find({})
-            .sort({views: 1, post_date: -1, topic: 1 })
+            .sort({views: 1, post_date: -1, isPortrait: 0, topic: 1, totalDuration: -1 })
             .limit(limit)
             .skip(skipIndex)
             .toArray()
@@ -70,14 +71,16 @@ module.exports = async (req, res) => {
         const { data } = req.body
         // fetch id, update read, like, duration
         for (let item of data ) {
-            const o_id = new ObjectID(item._id)
+            const { _id, views, visitedDate, totalDuration } = item
+            const o_id = new ObjectID(_id)
             // for each element do update one
             // update likes, views, visitedDate, totalDuration
             await collection
                 .updateOne({_id: o_id},
-                    {$inc:{views:1}}
+                    {$inc:{ views, totalDuration },
+                        $set: { visitedDate }}
                 )
         }
-        res.send("OK")
+        res.status(200).json({ data })
     }
 }

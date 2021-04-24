@@ -30,6 +30,10 @@ const postSchema = new mongoose.Schema({
     totalDuration: {
         type: Number,
         default: 0
+    },
+    isPortrait: {
+        type: Boolean,
+        default: true
     }
 })
 
