@@ -77,8 +77,10 @@ module.exports = async (req, res) => {
             // update likes, views, visitedDate, totalDuration
             await collection
                 .updateOne({_id: o_id},
-                    {$inc:{ views, totalDuration },
-                        $set: { visitedDate }}
+                    {
+                        // $inc:{ views, totalDuration },
+                        $set: { visitedDate, views, totalDuration }
+                    }
                 )
         }
         res.status(200).json({ data })
