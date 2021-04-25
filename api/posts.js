@@ -1,11 +1,24 @@
-const { send } = require('micro')
-const microCors = require('micro-cors')
-
-// Import Dependencies
 const url = require('url')
 const MongoClient = require('mongodb').MongoClient
+const ObjectID = require('mongodb').ObjectID
 
-const cors = microCors({ allowMethods: ['PUT', 'POST', 'GET'] })
+const allowCors = fn => async (req, res) => {
+    res.setHeader('Access-Control-Allow-Credentials', true)
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    // another common pattern
+    // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    )
+    if (req.method === 'OPTIONS') {
+        res.status(200).end()
+        return
+    }
+    return await fn(req, res)
+}
+
 
 // Create cached connection variable
 let cachedDb = null
@@ -54,9 +67,23 @@ const handler = async (req, res) => {
             .skip(skipIndex)
             .toArray()
         // Respond with a JSON string of all users in the collection
-        send(res, 200, {posts})
-        // res.status(200).json({posts})
+        // send(res, 200, {posts})
+        res.status(200).json({posts})
+    }
+    if (req.method === 'POST') {
+        const { post: { _id, views, visitedDate, totalDuration } } = req.body
+        // fetch id, update read, like, duration
+        console.log('Fetched id as')
+        console.log(_id)
+        const o_id = new ObjectID(_id)
+        await collection
+            .updateOne({_id: o_id},
+                {
+                    $set: { views, visitedDate, totalDuration }
+                }
+            )
+        res.status(200).send({_id})
     }
 }
 
-module.exports = cors(handler)
+module.exports = allowCors(handler)
