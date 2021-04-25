@@ -34,11 +34,9 @@ async function connectToDatabase(uri) {
 
 const handler = async (req, res) => {
     if (req.method === 'POST') {
-        const { post: { _id, views, visitedDate, totalDuration } } = req.body
+        // const { post: { _id, views, visitedDate, totalDuration } } = req.body
         // fetch id, update read, like, duration
-        console.log('Fetched id as')
-        console.log(_id)
-        send(res, 200, {_id})
+        send(res, 200, {data: req.body})
     }
 }
 
