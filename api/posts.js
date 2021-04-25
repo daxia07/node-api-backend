@@ -1,7 +1,13 @@
+const { send } = require('micro')
+const microCors = require('micro-cors')
+
 // Import Dependencies
 const url = require('url')
 const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
+
+const posts = microCors({ allowMethods: ['PUT', 'POST', 'GET'] })
+
 
 // Create cached connection variable
 let cachedDb = null
@@ -27,23 +33,9 @@ async function connectToDatabase(uri) {
     return db
 }
 
-// The main, exported, function of the endpoint,
-// dealing with the request and subsequent response
 const handler = async (req, res) => {
-    // Get a database connection, cached or otherwise,
-    // using the connection string environment variable as the argument
     const db = await connectToDatabase(process.env.DB_URI)
-    res.setHeader('Access-Control-Allow-Credentials', true)
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    // another common pattern
-    // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-    )
     const collection = await db.collection('posts')
-    // Select the "users" collection from the database
     if (req.method === "GET") {
         if (!parseInt(req.query.page)) {
             req.query.page = 1;
@@ -67,23 +59,20 @@ const handler = async (req, res) => {
         // Respond with a JSON string of all users in the collection
         res.status(200).json({ posts })
     } else if (req.method === 'POST') {
-        const { data } = req.body
+        const { post: { _id, views, visitedDate, totalDuration } } = req.body
         // fetch id, update read, like, duration
-        for (let item of data ) {
-            const { _id, views, visitedDate, totalDuration } = item
-            const o_id = new ObjectID(_id)
-            // for each element do update one
-            // update likes, views, visitedDate, totalDuration
-            await collection
-                .updateOne({_id: o_id},
-                    {
-                        // $inc:{ views, totalDuration },
-                        $set: { visitedDate, views, totalDuration }
-                    }
-                )
-        }
-        res.status(200).json({data})
+        console.log(visitedDate)
+        const o_id = new ObjectID(_id)
+        await collection
+            .updateOne({_id: o_id},
+                {
+                    // $inc:{ views, totalDuration },
+                    $set: { views, visitedDate, totalDuration }
+                }
+            )
+        send(res, 200, 'ok!')
     }
+
 }
 
-module.exports = handler
+module.exports = posts(handler)
