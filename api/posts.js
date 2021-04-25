@@ -6,7 +6,7 @@ const url = require('url')
 const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
 
-const posts = microCors({ allowMethods: ['PUT', 'POST', 'GET'] })
+const cors = microCors({ allowMethods: ['PUT', 'POST', 'GET'] })
 
 
 // Create cached connection variable
@@ -46,33 +46,34 @@ const handler = async (req, res) => {
         // if get method under root url
         const page = parseInt(req.query.page)
         const limit = parseInt(req.query.limit)
-        const skipIndex = (page-1) * limit
+        const skipIndex = (page - 1) * limit
 
         // Select the users collection from the database
         // select new
         const posts = await collection.find({})
-            .sort({views: 1, post_date: -1, isPortrait: -1, topic: 1, totalDuration: -1 })
+            .sort({views: 1, post_date: -1, isPortrait: -1, topic: 1, totalDuration: -1})
             .limit(limit)
             .skip(skipIndex)
             .toArray()
 
         // Respond with a JSON string of all users in the collection
-        res.status(200).json({ posts })
+        send(res, 200, {posts})
+        // res.status(200).json({posts})
     } else if (req.method === 'POST') {
-        const { post: { _id, views, visitedDate, totalDuration } } = req.body
-        // fetch id, update read, like, duration
-        console.log(visitedDate)
-        const o_id = new ObjectID(_id)
-        await collection
-            .updateOne({_id: o_id},
-                {
-                    // $inc:{ views, totalDuration },
-                    $set: { views, visitedDate, totalDuration }
-                }
-            )
-        send(res, 200, 'ok!')
+            const { post: { _id, views, visitedDate, totalDuration } } = req.body
+            // fetch id, update read, like, duration
+            console.log('Fetched id as')
+            console.log(_id)
+            const o_id = new ObjectID(_id)
+            await collection
+                .updateOne({_id: o_id},
+                    {
+                        // $inc:{ views, totalDuration },
+                        $set: { views, visitedDate, totalDuration }
+                    }
+                )
+            send(res, 200, 'ok!')
     }
-
 }
 
-module.exports = posts(handler)
+module.exports = cors(handler)
