@@ -43,6 +43,7 @@ const handler = async (req, res) => {
         console.log(data)
         for (let item of data ) {
             const { _id, views, visitedDate, totalDuration } = item
+            console.log(visitedDate)
             const o_id = new ObjectID(_id)
             // for each element do update one
             // update likes, views, visitedDate, totalDuration
@@ -50,7 +51,7 @@ const handler = async (req, res) => {
                 .updateOne({_id: o_id},
                     {
                         // $inc:{ views, totalDuration },
-                        $set: { visitedDate, views, totalDuration }
+                        $set: { views, totalDuration }
                     }
                 )
         }
