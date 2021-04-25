@@ -14,16 +14,19 @@ const handler = async (req, res) => {
         const { body: { _id, src } } = req
         const result = await probe(src, { rejectUnauthorized: false });
         const isPortrait = result.height > result.weight
-        console.log(result)
-        const o_id = new ObjectID(_id)
-        await collection
-            .updateOne({_id: o_id},
-                {
-                    $set: { isPortrait }
-                }
-            )
-        res.status(200).send({width: result.height,
-            height: result.width, isPortrait})
+        if (!!_id) {
+            const o_id = new ObjectID(_id)
+            await collection
+                .updateOne({_id: o_id},
+                    {
+                        $set: { isPortrait }
+                    }
+                )
+        }
+        res.status(200).send({
+            width: result.height,
+            height: result.width, isPortrait
+        })
     }
 }
 

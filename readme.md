@@ -14,3 +14,13 @@
 db.posts.update({_id:ObjectId("6080f6e44d25686bbc48d6c2")}, 
     {$inc:{views:1}})
 ```
+
+## Timeout
+```javascript
+Promise.race([
+    doSomethingInSeries(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 11.5e3))
+]).catch(function(err) {
+    // errors in res1, res2, res3 and the timeout will be caught here
+})
+```
