@@ -38,11 +38,11 @@ const handler = async (req, res) => {
     const collection = await db.collection('posts')
     console.log(collection)
     if (req.method === 'POST') {
-        const { data } = req.body
+        const { post: { _id } } = req.body
         // fetch id, update read, like, duration
-        console.log('Fetched data as')
-        console.log(data)
-        const o_id = new ObjectID("6083ec5d873a6e81a0e9876a")
+        console.log('Fetched id as')
+        console.log(_id)
+        const o_id = new ObjectID(_id)
         await collection
             .updateOne({_id: o_id},
                 {
