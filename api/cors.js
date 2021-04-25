@@ -41,19 +41,19 @@ const handler = async (req, res) => {
         const { data } = req.body
         // fetch id, update read, like, duration
         console.log(data)
-        // for (let item of data ) {
-        //     const { _id, views, visitedDate, totalDuration } = item
-        //     const o_id = new ObjectID(_id)
-        //     // for each element do update one
-        //     // update likes, views, visitedDate, totalDuration
-        //     await collection
-        //         .updateOne({_id: o_id},
-        //             {
-        //                 // $inc:{ views, totalDuration },
-        //                 $set: { visitedDate, views, totalDuration }
-        //             }
-        //         )
-        // }
+        for (let item of data ) {
+            const { _id, views, visitedDate, totalDuration } = item
+            const o_id = new ObjectID(_id)
+            // for each element do update one
+            // update likes, views, visitedDate, totalDuration
+            await collection
+                .updateOne({_id: o_id},
+                    {
+                        // $inc:{ views, totalDuration },
+                        $set: { visitedDate, views, totalDuration }
+                    }
+                )
+        }
     }
     send(res, 200, 'ok!')
 
