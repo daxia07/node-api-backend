@@ -4,8 +4,10 @@ const microCors = require('micro-cors')
 // Import Dependencies
 const url = require('url')
 const MongoClient = require('mongodb').MongoClient
+const ObjectID = require('mongodb').ObjectID
 
 const cors = microCors({ allowMethods: ['PUT', 'POST', 'GET'] })
+
 
 // Create cached connection variable
 let cachedDb = null
@@ -34,28 +36,20 @@ async function connectToDatabase(uri) {
 const handler = async (req, res) => {
     const db = await connectToDatabase(process.env.DB_URI)
     const collection = await db.collection('posts')
-    if (req.method === "GET") {
-        if (!parseInt(req.query.page)) {
-            req.query.page = 1;
-        }
-        if (!parseInt(req.query.limit)) {
-            req.query.limit = 10;
-        }
-        // if get method under root url
-        const page = parseInt(req.query.page)
-        const limit = parseInt(req.query.limit)
-        const skipIndex = (page - 1) * limit
-
-        // Select the users collection from the database
-        // select new
-        const posts = await collection.find({})
-            .sort({views: 1, post_date: -1, isPortrait: -1, topic: 1, totalDuration: -1})
-            .limit(limit)
-            .skip(skipIndex)
-            .toArray()
-        // Respond with a JSON string of all users in the collection
-        send(res, 200, {posts})
-        // res.status(200).json({posts})
+    console.log(collection)
+    if (req.method === 'POST') {
+        const { post: { _id, views, visitedDate, totalDuration } } = req.body
+        // fetch id, update read, like, duration
+        console.log('Fetched id as')
+        console.log(_id)
+        const o_id = new ObjectID(_id)
+        await collection
+            .updateOne({_id: o_id},
+                {
+                    $set: { views, visitedDate, totalDuration }
+                }
+            )
+        send(res, 200, 'ok!')
     }
 }
 
