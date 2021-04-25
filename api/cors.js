@@ -1,5 +1,6 @@
 const { send } = require('micro')
 const microCors = require('micro-cors')
+const probe = require('probe-image-size');
 
 // Import Dependencies
 const url = require('url')
@@ -36,17 +37,15 @@ async function connectToDatabase(uri) {
 const handler = async (req, res) => {
     const db = await connectToDatabase(process.env.DB_URI)
     const collection = await db.collection('posts')
-    console.log(collection)
     if (req.method === 'POST') {
-        const { post: { _id, views, visitedDate, totalDuration } } = req.body
-        // fetch id, update read, like, duration
-        console.log('Fetched id as')
-        console.log(_id)
-        const o_id = new ObjectID(_id)
+        const { body: { _id, src } } = req
+        const result = await probe(src, { rejectUnauthorized: false });
+        const isPortrait = result.height > result.weight
+        const o_id = ObjectID(_id)
         await collection
             .updateOne({_id: o_id},
                 {
-                    $set: { views, visitedDate, totalDuration }
+                    $set: { isPortrait }
                 }
             )
         send(res, 200, 'ok!')
