@@ -50,20 +50,6 @@ const handler = async (req, res) => {
                     $set: { views: 100 }
                 }
             )
-        // for (let item of data ) {
-        //     const { _id, views, visitedDate, totalDuration } = item
-        //     console.log(visitedDate)
-        //     const o_id = new ObjectID("6083ec5d873a6e81a0e9876a")
-        //     // for each element do update one
-        //     // update likes, views, visitedDate, totalDuration
-        //     await collection
-        //         .updateOne({_id: o_id},
-        //             {
-        //                 // $inc:{ views, totalDuration },
-        //                 $set: { views, totalDuration }
-        //             }
-        //         )
-        // }
     }
     send(res, 200, 'ok!')
 
