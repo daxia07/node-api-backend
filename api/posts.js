@@ -3,10 +3,6 @@ const url = require('url')
 const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
 
-const { send } = require('micro')
-const microCors = require('micro-cors')
-const cors = microCors({ allowMethods: ['PUT', 'POST', 'GET'] })
-
 // Create cached connection variable
 let cachedDb = null
 
@@ -87,7 +83,7 @@ const handler = async (req, res) => {
                     }
                 )
         }
-        send(res, 200, 'ok!')
+        res.status(200).json({data})
     }
 }
 
