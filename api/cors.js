@@ -36,22 +36,24 @@ async function connectToDatabase(uri) {
 const handler = async (req, res) => {
     const db = await connectToDatabase(process.env.DB_URI)
     const collection = await db.collection('posts')
+    console.log(collection)
     if (req.method === 'POST') {
         const { data } = req.body
         // fetch id, update read, like, duration
-        for (let item of data ) {
-            const { _id, views, visitedDate, totalDuration } = item
-            const o_id = new ObjectID(_id)
-            // for each element do update one
-            // update likes, views, visitedDate, totalDuration
-            await collection
-                .updateOne({_id: o_id},
-                    {
-                        // $inc:{ views, totalDuration },
-                        $set: { visitedDate, views, totalDuration }
-                    }
-                )
-        }
+        console.log(data)
+        // for (let item of data ) {
+        //     const { _id, views, visitedDate, totalDuration } = item
+        //     const o_id = new ObjectID(_id)
+        //     // for each element do update one
+        //     // update likes, views, visitedDate, totalDuration
+        //     await collection
+        //         .updateOne({_id: o_id},
+        //             {
+        //                 // $inc:{ views, totalDuration },
+        //                 $set: { visitedDate, views, totalDuration }
+        //             }
+        //         )
+        // }
     }
     send(res, 200, 'ok!')
 
