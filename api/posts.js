@@ -37,6 +37,7 @@ const handler = async (req, res) => {
         console.log(_id)
         const o_id = new ObjectID(_id)
         delete post["_id"]
+        delete post["startTime"]
         await collection
             .updateOne({_id: o_id},
                 {
