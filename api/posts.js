@@ -30,15 +30,17 @@ const handler = async (req, res) => {
         res.status(200).json({posts})
     }
     if (req.method === 'POST') {
-        const { post: { _id, views = 1, visitedDate, totalDuration, likes = 0 } } = req.body
+        const { post } = req.body
+        const { _id }  = post
         // fetch id, update read, like, duration
         console.log('Fetched id as')
         console.log(_id)
         const o_id = new ObjectID(_id)
+        delete post["_id"]
         await collection
             .updateOne({_id: o_id},
                 {
-                    $set: { views, visitedDate, totalDuration, likes }
+                    $set: { ...post }
                 }
             )
         res.status(200).send({_id})
