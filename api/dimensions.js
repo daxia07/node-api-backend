@@ -7,7 +7,7 @@ const connectToDatabase = dbUtils.connectionToDatabase;
 // Create cached connection variable
 
 const handler = async (req, res) => {
-    const db = await connectToDatabase(process.env.DB_URI, null)
+    const { db, client } = await connectToDatabase(process.env.DB_URI, null)
     const collection = await db.collection('posts')
     if (req.method === 'POST') {
         console.log(req.body)
@@ -28,6 +28,7 @@ const handler = async (req, res) => {
             height: result.width, isPortrait
         })
     }
+    client.close()
 }
 
 module.exports = allowCors(handler)

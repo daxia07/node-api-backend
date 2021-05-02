@@ -36,7 +36,7 @@ const connectionToDatabase = async (uri, cachedDb) =>  {
 
     // Cache the database connection and return the connection
     cachedDb = db
-    return db
+    return { db, client }
 }
 
 module.exports = {

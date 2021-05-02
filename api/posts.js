@@ -4,7 +4,7 @@ const allowCors = dbUtils.allowCors;
 const connectToDatabase = dbUtils.connectionToDatabase;
 
 const handler = async (req, res) => {
-    const db = await connectToDatabase(process.env.DB_URI, null)
+    const { db, client } = await connectToDatabase(process.env.DB_URI, null)
     const collection = await db.collection('posts')
     if (req.method === "GET") {
         if (!parseInt(req.query.page)) {
@@ -59,6 +59,7 @@ const handler = async (req, res) => {
 
         res.status(200).send({_id})
     }
+    client.close()
 }
 
 module.exports = allowCors(handler)
