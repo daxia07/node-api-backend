@@ -21,7 +21,7 @@ const handler = async (req, res) => {
         // Select the users collection from the database
         // select new
         const posts = await collection.find({})
-            .sort({dislikes: 1, views: 1, post_date: -1, isPortrait: -1, topic: 1})
+            .sort({dislikes: 1, views: 1, post_date: -1, topic: 1, isPortrait: -1})
             .limit(limit)
             .skip(skipIndex)
             .toArray()
