@@ -1,32 +1,34 @@
 // FileName: index.js
 // Import express
 require('dotenv').config()
-const express = require('express')
-// Initialize the app
-const app = express()
-// Import routes
-const apiRoutes = require('./api-routes')
-const mongoose = require('mongoose')
+const dbUtils = require('./utils/db');
+const getSongs = require('./utils/onedrive')
+const connectToDatabase = dbUtils.connectionToDatabase;
 
-// Setup server port
-const port = process.env.PORT || 8080
-app.use(express.json());
-app.use(express.urlencoded({
-    extended: true
-  }))
+//TODO: fetch the latest token
+// call api to get token
+const {INTIAL_TOKEN} = process.env
 
-mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true}).then(() => {}, err => console.log(err))
-const db = mongoose.connection
+const main = async () => {
+    const { db, client } = await connectToDatabase(process.env.DB_URI, null)
+    songs = await getSongs(INTIAL_TOKEN)
+    const collection = await db.collection('songs')
+    for (let i=0; i < songs.length; i++) {
+        const {fileId} = songs[i]
+        const query = { fileId };
+        delete songs[i].fileId
+        const update = { "$set": songs[i] };
+        const options = { upsert: true };
+        try {
+            await collection.updateOne(
+                query, update, options
+            )
+        } catch (e) {
+            console.log(e)
+            continue
+        }
+    }
+    client.close()
+}
 
-db.on('error', (error) => console.error(error))
-db.once('open', () => console.log('connected to database'))
-
-// Send message for default URL
-app.get('/', (req, res) => res.send('Hello World with Express'));
-// Use Api routes in the App
-app.use('/api', apiRoutes)
-
-// Launch app to listen to specified port
-app.listen(port, function () {
-    console.log('Running API Server on port ' + port);
-})
+main();
