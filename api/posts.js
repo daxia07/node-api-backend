@@ -23,7 +23,7 @@ const handler = async (req, res) => {
     }
     if (req.method === 'POST') {
         const { post } = req.body
-        const { _id, increaseDislike=0, topic, author, post_date }  = post
+        const { _id, increaseDislike=0, topic, author }  = post
         // fetch id, update read, like, duration
         console.log('Fetched id as')
         console.log(_id)
@@ -31,15 +31,14 @@ const handler = async (req, res) => {
         delete post["_id"]
         delete post["startTime"]
         delete post["increaseDislike"]
-        console.log(topic, author, post_date)
+        // console.log(increaseDislike)
         if (increaseDislike > 0) {
             const ret = await collection.updateMany(
-                {topic, author, post_date},
+                {topic, author},
                 {
                     $inc: {dislike: 1}
                 }
             )
-            console.log(ret)
         } else {
             await collection
                 .updateOne({_id: o_id},
