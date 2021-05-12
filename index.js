@@ -7,6 +7,7 @@ const connectToDatabase = dbUtils.connectionToDatabase;
 
 //TODO: fetch the latest token
 // call api to get token
+// TODO: browse with cookie and update token every hour
 const {INTIAL_TOKEN} = process.env
 
 const main = async () => {

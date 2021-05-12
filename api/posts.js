@@ -13,10 +13,14 @@ const handler = async (req, res) => {
         if (!parseInt(req.query.limit)) {
             req.query.limit = 10;
         }
+        if (!parseInt(req.query.skip)) {
+            req.query.skip = 0;
+        }
         // if get method under root url
         const page = parseInt(req.query.page)
         const limit = parseInt(req.query.limit)
-        const skipIndex = (page - 1) * limit
+        const skipNum = parseInt(req.query.skip)
+        const skipIndex = (page - 1) * limit + skip
 
         // Select the users collection from the database
         // select new
