@@ -7,26 +7,14 @@ const handler = async (req, res) => {
     const { db, client } = await connectToDatabase(process.env.DB_URI, null)
     const collection = await db.collection('posts')
     if (req.method === "GET") {
-        if (!parseInt(req.query.page)) {
-            req.query.page = 1;
-        }
-        if (!parseInt(req.query.limit)) {
-            req.query.limit = 10;
-        }
-        if (!parseInt(req.query.skip)) {
-            req.query.skip = 0;
-        }
+        const { query: { page="1", limit="10", skip="0"}} = req
         // if get method under root url
-        const page = parseInt(req.query.page)
-        const limit = parseInt(req.query.limit)
-        const skipNum = parseInt(req.query.skip)
-        const skipIndex = (page - 1) * limit + skip
-
+        const skipIndex = (parseInt(page) - 1) * parseInt(limit) + parseInt(skip)
         // Select the users collection from the database
         // select new
         const posts = await collection.find({})
             .sort({dislikes: 1, views: 1, post_date: -1, topic: 1, isPortrait: -1})
-            .limit(limit)
+            .limit(parseInt(limit))
             .skip(skipIndex)
             .toArray()
         // Respond with a JSON string of all users in the collection
