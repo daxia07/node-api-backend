@@ -11,8 +11,8 @@ const handler = async (req, res) => {
         // if get method under root url
         const skipIndex = (parseInt(page) - 1) * parseInt(limit) + parseInt(skip)
         // Select the users collection from the database
-        // select new
-        const posts = await collection.find({dislike: {$exists: false}})
+        // TODO: fix the increaseDislike PR
+        const posts = await collection.find({dislike: {$exists: false}, increaseDislike: {$exists: false}})
             .sort({dislikes: 1, views: 1, post_date: -1, topic: 1, isPortrait: -1})
             .limit(parseInt(limit))
             .skip(skipIndex)
